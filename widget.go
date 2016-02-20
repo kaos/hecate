@@ -6,7 +6,7 @@ import (
 
 type Widget interface {
 	sizeForLayout(layout Layout) Size
-	drawAtPoint(tab *DataTab, layout Layout, point Point, style Style) Size
+	drawAtPoint(layout Layout, point Point, style Style) Size
 }
 
 type WidgetSlice []Widget
@@ -35,9 +35,9 @@ func (widgets WidgetSlice) numberVisibleForLayout(layout Layout) int {
 	return count
 }
 
-func (widgets WidgetSlice) layout(show_date bool) Layout {
+func (widgets WidgetSlice) layout() Layout {
 	width, _ := termbox.Size()
-	layout := Layout{pressure: 0, spacing: 4, num_spaces: 0, widget_size: Size{0, 0}, show_date: show_date}
+	layout := Layout{pressure: 0, spacing: 4, num_spaces: 0, widget_size: Size{0, 0}}
 	padding := 2
 	for ; layout.pressure < 10; layout.pressure++ {
 		layout.spacing = 4
@@ -52,33 +52,28 @@ func (widgets WidgetSlice) layout(show_date bool) Layout {
 	return layout
 }
 
-func listOfWidgets() WidgetSlice {
-	all_widgets := [...]Widget{
-		NavigationWidget(0),
-		CursorWidget(0),
-		OffsetWidget(0),
+func (tab *DataTab) createWidgets() {
+	tab.widgets = WidgetSlice{
+		NavigationWidget{tab},
+		CursorWidget{tab},
+		OffsetWidget{tab},
 	}
-
-	return all_widgets[:]
 }
 
-func heightOfWidgets(show_date bool) int {
-	widgets := listOfWidgets()
-	layout := widgets.layout(show_date)
+func (tab *DataTab) heightOfWidgets() int {
+	layout := tab.widgets.layout()
 	return layout.widget_size.height
 }
 
-func drawWidgets(tab *DataTab, style Style) Layout {
-	widgets := listOfWidgets()
-
+func (tab *DataTab) drawWidgets(style Style) Layout {
 	width, height := termbox.Size()
 	padding := 2
-	layout := widgets.layout(tab.show_date)
+	layout := tab.widgets.layout()
 	start_x := (width-2*padding-layout.width())/2 + padding
 	start_y := height - layout.widget_size.height
 	point := Point{start_x, start_y}
-	for _, widget := range widgets {
-		widget_size := widget.drawAtPoint(tab, layout, point, style)
+	for _, widget := range tab.widgets {
+		widget_size := widget.drawAtPoint(layout, point, style)
 		point.x += widget_size.width
 		if widget_size.width > 0 {
 			point.x += layout.spacing

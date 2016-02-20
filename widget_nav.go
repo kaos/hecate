@@ -1,6 +1,8 @@
 package main
 
-type NavigationWidget int
+type NavigationWidget struct {
+	*DataTab
+}
 
 func (widget NavigationWidget) sizeForLayout(layout Layout) Size {
 	if layout.pressure > 1 {
@@ -17,7 +19,7 @@ func (widget NavigationWidget) sizeForLayout(layout Layout) Size {
 	return Size{runeCount, 2}
 }
 
-func (widget NavigationWidget) drawAtPoint(tab *DataTab, layout Layout, point Point, style Style) Size {
+func (widget NavigationWidget) drawAtPoint(layout Layout, point Point, style Style) Size {
 	fg := style.default_fg
 	bg := style.default_bg
 	x_pos := point.x

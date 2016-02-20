@@ -33,7 +33,7 @@ func (screen *DataScreen) initializeWithFiles(files []FileInfo) {
 	var tabs []*DataTab
 	for _, file := range files {
 		tab := NewDataTab(file)
-		tabs = append(tabs, &tab)
+		tabs = append(tabs, tab)
 	}
 
 	screen.tabs = tabs
@@ -92,10 +92,10 @@ func (screen *DataScreen) handleKeyEvent(event termbox.Event, output chan<- inte
 				tab_copy.view_port = old_tab.view_port
 				tab_copy.cursor.pos = tab_copy.view_port.first_row * tab_copy.view_port.bytes_per_row
 				tab_copy.cursor.mode = StringMode
-				new_tabs = append(new_tabs, &tab_copy)
+				new_tabs = append(new_tabs, tab_copy)
 				screen.active_tab = index + 1
 				go func() {
-					(&tab_copy).receiveEvents(output)
+					tab_copy.receiveEvents(output)
 				}()
 			}
 		}

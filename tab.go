@@ -46,9 +46,10 @@ type DataTab struct {
 	search_quit_channel     chan bool
 	quit_channel            chan bool
 	field_editor            *FieldEditor
+	widgets                 WidgetSlice
 }
 
-func NewDataTab(file FileInfo) DataTab {
+func NewDataTab(file FileInfo) *DataTab {
 	cursor := Cursor{
 		int_length: 4,
 		fp_length:  4,
@@ -59,7 +60,7 @@ func NewDataTab(file FileInfo) DataTab {
 		epoch_time: time.Unix(0, 0).UTC(),
 	}
 
-	return DataTab{
+	tab := &DataTab{
 		search_result_channel:   make(chan *Cursor),
 		search_quit_channel:     make(chan bool),
 		search_progress_channel: make(chan int),
@@ -70,6 +71,8 @@ func NewDataTab(file FileInfo) DataTab {
 		hilite:                  cursor.highlightRange(file.bytes),
 		prev_mode:               cursor.mode,
 	}
+	tab.createWidgets()
+	return tab
 }
 
 func (tab *DataTab) receiveEvents(output chan<- interface{}) {
@@ -105,7 +108,7 @@ func (tab *DataTab) receiveEvents(output chan<- interface{}) {
 
 func (tab *DataTab) performLayout(width int, height int) {
 	cursor := tab.cursor
-	legend_height := heightOfWidgets(tab.show_date)
+	legend_height := tab.heightOfWidgets()
 	line_height := 3
 	cursor_row_within_view_port := 0
 
@@ -390,7 +393,7 @@ func (tab *DataTab) drawTab(style Style, vertical_offset int) {
 	hilite := tab.hilite
 	view_port := tab.view_port
 
-	layout := drawWidgets(tab, style)
+	layout := tab.drawWidgets(style)
 	start_x, start_y := 2, 1+vertical_offset
 	x, y := start_x, start_y
 	x_pad := 2

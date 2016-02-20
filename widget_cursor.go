@@ -2,12 +2,14 @@ package main
 
 import "fmt"
 
-type CursorWidget int
+type CursorWidget struct {
+	*DataTab
+}
 
 func (widget CursorWidget) sizeForLayout(layout Layout) Size {
 	runeCount := 0
 	height := 2
-	if layout.show_date {
+	if widget.show_date {
 		height = 4
 	}
 	if layout.pressure < 5 || layout.pressure == 6 {
@@ -37,15 +39,15 @@ func (widget CursorWidget) sizeForLayout(layout Layout) Size {
 	return Size{runeCount, height}
 }
 
-func (widget CursorWidget) drawAtPoint(tab *DataTab, layout Layout, point Point, style Style) Size {
+func (widget CursorWidget) drawAtPoint(layout Layout, point Point, style Style) Size {
 	fg := style.default_fg
 	bg := style.default_bg
-	cursor := tab.cursor
+	cursor := widget.cursor
 	x_pos := point.x
 	y_pos := point.y
 	max_x_pos := x_pos
 	pressure := layout.pressure
-	data := tab.bytes[cursor.pos : cursor.pos+cursor.length()]
+	data := widget.bytes[cursor.pos : cursor.pos+cursor.length()]
 
 	if pressure < 5 || pressure == 6 {
 		x_pos += drawStringAtPoint("Cursor: ", x_pos, y_pos, fg, bg)
@@ -151,7 +153,7 @@ func (widget CursorWidget) drawAtPoint(tab *DataTab, layout Layout, point Point,
 	}
 	max_x_pos = x_pos
 	x_pos = point.x
-	if layout.show_date {
+	if widget.show_date {
 		y_pos++
 		if pressure < 6 {
 			y_pos++
