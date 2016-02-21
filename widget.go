@@ -57,6 +57,7 @@ func (tab *DataTab) createWidgets() {
 		NavigationWidget{tab},
 		CursorWidget{tab},
 		OffsetWidget{tab},
+		DataWidget{tab},
 	}
 }
 

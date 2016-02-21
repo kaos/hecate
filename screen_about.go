@@ -95,6 +95,9 @@ func (screen *AboutScreen) drawScreen(style Style) {
 
 		{":", "jump to byte"},
 		{"x", "toggle hex"},
+
+		{"", ""},
+		{"", ""},
 	}
 
 	commands2 := [...]Command{
@@ -114,6 +117,9 @@ func (screen *AboutScreen) drawScreen(style Style) {
 
 		{"/", "search file"},
 		{"n", "next match"},
+
+		{"", ""},
+		{"", ""},
 	}
 
 	commands3 := [...]Command{
@@ -133,6 +139,8 @@ func (screen *AboutScreen) drawScreen(style Style) {
 		{"ctrl-b", "page up"},
 
 		{"enter", "edit mode"},
+		{"space", "toggle mark"},
+
 		{"?", "this screen"},
 		{"q", "quit program"},
 	}

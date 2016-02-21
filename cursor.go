@@ -36,17 +36,19 @@ type ByteRange struct {
 }
 
 type Cursor struct {
-	pos        int
-	max_pos    int
-	int_length int
-	fp_length  int
-	bit_length int
-	mode       CursorMode
-	unsigned   bool
-	big_endian bool
-	hex_mode   bool
-	epoch_time time.Time
-	epoch_unit TimeSinceEpochUnit
+	pos         int
+	max_pos     int
+	mark_pos    int
+	mark_active bool
+	int_length  int
+	fp_length   int
+	bit_length  int
+	mode        CursorMode
+	unsigned    bool
+	big_endian  bool
+	hex_mode    bool
+	epoch_time  time.Time
+	epoch_unit  TimeSinceEpochUnit
 }
 
 func (cursor *Cursor) c_type() string {
@@ -146,16 +148,32 @@ func (cursor *Cursor) color(style Style) termbox.Attribute {
 	return style.text_cursor_hex_bg
 }
 
+func (cursor *Cursor) toggleMark () {
+	cursor.mark_active = !cursor.mark_active
+	if cursor.mark_active {
+		cursor.mark_pos = cursor.pos
+	}
+}
+
 func (cursor *Cursor) highlightRange(data []byte) ByteRange {
 	var hilite ByteRange
+
+	if cursor.mark_active {
+		hilite.pos = Min(cursor.mark_pos, cursor.pos)
+		hilite.length = Abs(cursor.mark_pos - cursor.pos) + 1
+		return hilite
+	}
+
 	if cursor.mode != StringMode || !isPrintable(data[cursor.pos]) {
 		return hilite
 	}
+
 	hilite.pos = cursor.pos
 	for ; hilite.pos > 0 && isPrintable(data[hilite.pos-1]); hilite.pos-- {
 	}
 	for ; hilite.pos+hilite.length < len(data) && isPrintable(data[hilite.pos+hilite.length]); hilite.length++ {
 	}
+
 	return hilite
 }
 

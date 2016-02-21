@@ -42,5 +42,7 @@ Full list of commands:
 <tr><td>g</td><td>file start</td><td>a</td><td>date decoding</td><td>ctrl-f</td><td>page down</td></tr>
 <tr><td>G</td><td>file end</td><td>@</td><td>set date epoch</td><td>ctrl-b</td><td>page up</td></tr>
 <tr><td>:</td><td>jump to byte</td><td>/</td><td>search file</td><td>enter</td><td>edit mode</td></tr>
-<tr><td>x</td><td>toggle hex</td><td>n</td><td>next match</td><td>?</td><td>help screen</td></tr>
+<tr><td>x</td><td>toggle hex</td><td>n</td><td>next match</td><td>space</td><td>toggle mark</td></tr>
+<tr><td></td><td></td><td></td><td></td><td>?</td><td>help screen</td></tr>
+<tr><td></td><td></td><td></td><td></td><td>q</td><td>quit program</td></tr>
 </table>
